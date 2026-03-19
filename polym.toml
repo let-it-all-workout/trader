@@ -32,7 +32,7 @@ telegram_channel = "signals"
 [news]
 enabled = true
 refresh_secs = 180
-extra_keywords = ["dangote", "refinery", "ipo", "bpe", "ngx", "agriculture", "financial sector", "earnings report", "dividend", "qualification date", "closure of register", "top gainer", "stock price spike", "banking", "insurance", "uk exchange", "london stock exchange", "lse", "dual listing", "cross listing", "gdr", "zenith bank"]
+extra_keywords = ["dangote", "refinery", "ipo", "bpe", "ngx", "agriculture", "financial sector", "earnings report", "dividend", "qualification date", "closure of register", "top gainer", "stock price spike", "banking", "insurance", "uk exchange", "london stock exchange", "lse", "dual listing", "cross listing", "gdr", "zenith bank", "unicorn", "bitcoin", "ethereum", "defi", "stablecoin", "token", "blockchain", "whale", "funding round", "venture capital", "hyperliquid", "openclaw", "hype", "pump", "trending", "alpha", "sentiment"]
 google_queries = [
   "Nigeria tech startup funding unicorn fintech venture capital",
   "Nigeria NGX financial sector earnings report dividend qualification date",
@@ -41,7 +41,17 @@ google_queries = [
   "Africa startup funding unicorn exits IPO",
   "Zenith Bank UK exchange listing London Stock Exchange dual listing",
   "Nigeria power sector IPO DisCo GenCo privatization",
-  "AI chips cloud data center model application market"
+  "AI chips cloud data center model application market",
+  "Nigeria breaking news business markets today",
+  "Dangote refinery IPO listing Nigeria",
+  "Nigerian Exchange block trade insider dealing",
+  "crypto Bitcoin Ethereum DeFi stablecoin market news",
+  "cryptocurrency whale flow exchange inflow blockchain",
+  "Hyperliquid OpenClaw crypto project hype sentiment",
+  "crypto project pump trending viral alpha",
+  "global unicorn startup funding valuation IPO",
+  "worldwide fintech finance technology innovation",
+  "tech startup invention patent funding round"
 ]
 
 [[news.sources]]
@@ -104,6 +114,30 @@ url = "https://news.google.com/rss/search?q=Zenith+Bank+UK+exchange+listing"
 enabled = true
 priority = 18
 
+[[news.sources]]
+name = "Crypto Bitcoin Ethereum DeFi"
+url = "https://news.google.com/rss/search?q=crypto+Bitcoin+Ethereum+DeFi+stablecoin+market"
+enabled = true
+priority = 18
+
+[[news.sources]]
+name = "Crypto Project Hype Sentiment"
+url = "https://news.google.com/rss/search?q=Hyperliquid+OpenClaw+crypto+hype+pump+trending"
+enabled = true
+priority = 16
+
+[[news.sources]]
+name = "Global Unicorn Startup Funding"
+url = "https://news.google.com/rss/search?q=unicorn+startup+funding+valuation+IPO+venture+capital"
+enabled = true
+priority = 14
+
+[[news.sources]]
+name = "Worldwide Fintech Finance Tech"
+url = "https://news.google.com/rss/search?q=fintech+finance+technology+innovation+global"
+enabled = true
+priority = 12
+
 [premium_feeds.ngx_microstructure]
 enabled = false
 provider = ""
@@ -136,17 +170,39 @@ queries = [
   "Nigeria crypto whale move exchange inflow",
   "Zenith Bank UK exchange listing London Stock Exchange",
   "Nigeria power sector IPO DisCo GenCo listing",
-  "Africa startup unicorn funding valuation round"
+  "Africa startup unicorn funding valuation round",
+  "crypto Bitcoin Ethereum whale flow exchange",
+  "global unicorn startup funding valuation IPO",
+  "fintech technology innovation worldwide",
+  "Hyperliquid OpenClaw hype pump sentiment",
+  "crypto project trending viral alpha"
 ]
 
 [news.twitter_scan]
-enabled = true
+# Disabled: we use Twitter browser + cookie instead of unreliable Nitter RSS
+enabled = false
 nitter_rss_base = "https://nitter.poast.org"
+queries = [
+  "NGX dividend earnings surprise",
+  "Zenith Bank UK exchange listing",
+  "Nigeria startup funding unicorn",
+  "Nigeria crypto whale flow",
+  "DisCo GenCo IPO Nigeria",
+  "Nigeria stock market block trade",
+  "Africa startup funding round",
+  "crypto Bitcoin Ethereum DeFi whale",
+  "unicorn startup funding valuation global",
+  "fintech tech innovation worldwide",
+  "Hyperliquid OpenClaw hype pump",
+  "crypto project trending viral sentiment"
+]
 nitter_rss_bases = [
   "https://nitter.poast.org",
   "https://nitter.privacydev.net",
   "https://nitter.1d4.us",
-  "https://nitter.esmailelbob.xyz"
+  "https://nitter.esmailelbob.xyz",
+  "https://nitter.woodland.cafe",
+  "https://nitter.weiler.rocks"
 ]
 
 [news.twitter_browser]
@@ -160,5 +216,9 @@ queries = [
   "Zenith Bank UK exchange listing",
   "Nigeria startup funding unicorn",
   "Nigeria crypto whale flow",
-  "DisCo GenCo IPO Nigeria"
+  "DisCo GenCo IPO Nigeria",
+  "crypto Bitcoin Ethereum whale DeFi",
+  "unicorn startup funding global",
+  "Hyperliquid OpenClaw hype pump sentiment",
+  "crypto project trending viral alpha"
 ]

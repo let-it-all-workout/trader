@@ -100,7 +100,7 @@ pub fn build_intel_snapshot(news: &NewsSnapshot) -> IntelSnapshot {
 
     let whales: Vec<WhaleSignal> = clustered
         .iter()
-        .filter(|s| is_whale_type(&s.event_type) || s.event_type == "stock-spike")
+        .filter(|s| is_whale_type(&s.event_type) || s.event_type == "stock-spike" || s.event_type == "hype-sentiment" || s.event_type == "crypto-alpha")
         .filter(|s| s.confidence >= 55)
         .take(10)
         .map(|s| WhaleSignal {
@@ -153,6 +153,15 @@ fn detect_event_type(text: &str) -> String {
     if contains_any(text, &["policy", "regulation", "cbn", "act", "tariff", "approval"]) {
         return "policy-catalyst".to_string();
     }
+    if contains_any(
+        text,
+        &["hyperliquid", "openclaw", "hype", "pump", "trending", "viral", "alpha", "sentiment", "buzz"],
+    ) {
+        return "hype-sentiment".to_string();
+    }
+    if contains_any(text, &["crypto", "bitcoin", "ethereum", "defi", "whale", "token"]) {
+        return "crypto-alpha".to_string();
+    }
     "market-intel".to_string()
 }
 
@@ -177,6 +186,8 @@ fn score_impact(text: &str, event_type: &str) -> i32 {
         "insider-flow" => 24,
         "block-trade-proxy" => 24,
         "institutional-flow" => 22,
+        "hype-sentiment" => 20,
+        "crypto-alpha" => 18,
         "report-release" => 18,
         "dividend-alert" => 16,
         "stock-spike" => 16,
@@ -230,7 +241,7 @@ fn explain_reasons(text: &str, event_type: &str, confidence: i32) -> String {
 fn is_whale_type(event_type: &str) -> bool {
     matches!(
         event_type,
-        "insider-flow" | "block-trade-proxy" | "institutional-flow"
+        "insider-flow" | "block-trade-proxy" | "institutional-flow" | "hype-sentiment" | "crypto-alpha"
     )
 }
 
@@ -239,8 +250,15 @@ fn build_watchlists(scoreboard: &[IntelSignal]) -> Vec<WatchlistTrigger> {
     groups.insert("Event-driven NGX".to_string(), Vec::new());
     groups.insert("Nigeria/Africa Growth".to_string(), Vec::new());
     groups.insert("Global Risk-On/Off".to_string(), Vec::new());
+    groups.insert("Crypto Hype & Sentiment".to_string(), Vec::new());
 
     for s in scoreboard {
+        if is_crypto_hype_sentiment(s) {
+            groups
+                .entry("Crypto Hype & Sentiment".to_string())
+                .or_default()
+                .push(s);
+        }
         if is_event_driven_ngx(s) {
             groups
                 .entry("Event-driven NGX".to_string())
@@ -328,6 +346,10 @@ fn is_global_risk(s: &IntelSignal) -> bool {
     s.region == "Global"
         || matches!(s.focus.as_str(), "Crypto" | "Markets")
         || matches!(s.event_type.as_str(), "stock-spike" | "policy-catalyst")
+}
+
+fn is_crypto_hype_sentiment(s: &IntelSignal) -> bool {
+    matches!(s.event_type.as_str(), "hype-sentiment" | "crypto-alpha")
 }
 
 fn fingerprint(title: &str) -> String {

@@ -137,9 +137,18 @@ struct BrowserTweet {
 }
 
 #[derive(Debug, Clone, Default)]
+pub struct NewsSourceCounts {
+    pub google: usize,
+    pub brave: usize,
+    pub twitter_rss: usize,
+    pub twitter_browser: usize,
+}
+
+#[derive(Debug, Clone, Default)]
 pub struct NewsSnapshot {
     pub items: Vec<NewsItem>,
     pub updated_at: Option<DateTime<Utc>>,
+    pub source_counts: NewsSourceCounts,
 }
 
 #[derive(Debug, Clone)]
@@ -231,6 +240,7 @@ pub async fn fetch_news_snapshot(
     });
 
     let mut deduped = Vec::new();
+    let mut counts = NewsSourceCounts::default();
     for ranked in all_items {
         let url_key = ranked.item.url.trim().to_lowercase();
         let title_key = ranked.item.title.trim().to_lowercase();
@@ -242,6 +252,15 @@ pub async fn fetch_news_snapshot(
         }
         seen_links.insert(url_key);
         seen_titles.insert(title_key);
+        if ranked.item.source.starts_with("Google News") {
+            counts.google += 1;
+        } else if ranked.item.source == "Brave Search" {
+            counts.brave += 1;
+        } else if ranked.item.source == "Twitter Alpha Scan" {
+            counts.twitter_rss += 1;
+        } else if ranked.item.source == "Twitter Browser Alpha" {
+            counts.twitter_browser += 1;
+        }
         deduped.push(ranked.item);
         if deduped.len() >= max_items {
             break;
@@ -251,6 +270,7 @@ pub async fn fetch_news_snapshot(
     Ok(NewsSnapshot {
         items: deduped,
         updated_at: Some(Utc::now()),
+        source_counts: counts,
     })
 }
 
@@ -734,6 +754,7 @@ fn detect_tags(text: &str, cfg: &NewsConfig) -> String {
         ("dividend-alert", vec!["dividend", "qualification date", "closure of register", "dividend declaration"]),
         ("report-release", vec!["earnings report", "results", "q1", "q2", "q3", "full year", "audited", "unaudited"]),
         ("crypto-alpha", vec!["crypto", "bitcoin", "ethereum", "stablecoin", "defi", "whale"]),
+        ("hype-sentiment", vec!["hyperliquid", "openclaw", "hype", "pump", "trending", "viral", "alpha", "sentiment", "buzz"]),
     ] {
         if words.iter().any(|w| text.contains(w)) {
             tags.push(name.to_string());
@@ -886,8 +907,8 @@ fn catalyst_keywords() -> &'static [&'static str] {
 }
 
 fn effective_sources(cfg: &NewsConfig) -> Vec<NewsSourceConfig> {
+    let mut out = Vec::new();
     if !cfg.google_queries.is_empty() {
-        let mut out = Vec::new();
         for q in &cfg.google_queries {
             if q.trim().is_empty() {
                 continue;
@@ -902,14 +923,18 @@ fn effective_sources(cfg: &NewsConfig) -> Vec<NewsSourceConfig> {
                 priority: 14,
             });
         }
-        if !out.is_empty() {
-            return out;
-        }
     }
     if !cfg.sources.is_empty() {
-        return cfg.sources.clone();
+        for s in &cfg.sources {
+            if s.enabled && !s.url.is_empty() && !out.iter().any(|x| x.url == s.url) {
+                out.push(s.clone());
+            }
+        }
     }
-    default_sources()
+    if out.is_empty() {
+        return default_sources();
+    }
+    out
 }
 
 fn default_sources() -> Vec<NewsSourceConfig> {

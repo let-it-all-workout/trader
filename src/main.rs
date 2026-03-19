@@ -25,7 +25,7 @@ use axum::{
 use config::Config;
 use funding::{detect_arbs, ArbOpportunity, ExchangeFilter, FundingRate, StableArbOpportunity, EXCHANGES};
 use intel::{IntelSignal, IntelSnapshot, WatchlistTrigger, WhaleSignal};
-use news::{NewsConfig, NewsItem, NewsSnapshot};
+use news::{NewsConfig, NewsItem, NewsSnapshot, NewsSourceCounts};
 use premium_feeds::{PremiumFeedsConfig, fetch_filings_insider, fetch_institutional_flow, fetch_ngx_microstructure};
 use polymarket::{
     CorrelationOpportunity, CrossPlatformOpportunity, EndgameOpportunity,
@@ -197,6 +197,7 @@ struct NigeriaNewsTemplate {
     items: Vec<NewsItem>,
     total: usize,
     updated_label: String,
+    source_counts: NewsSourceCounts,
 }
 
 #[derive(Template)]
@@ -512,6 +513,7 @@ async fn nigeria_news_status(State(state): State<AppState>) -> impl IntoResponse
         total: snapshot.items.len(),
         items: snapshot.items,
         updated_label,
+        source_counts: snapshot.source_counts,
     })
 }
 
