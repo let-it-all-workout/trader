@@ -1,0 +1,16 @@
+{% if !watchlists.is_empty() %}
+<div class="intel-watchlists">
+    {% for w in watchlists %}
+    <div class="intel-watch">
+        <div class="intel-watch__name">{{ w.watchlist }}</div>
+        <div class="intel-watch__stats">
+            <span>{{ w.trigger_count }} triggers</span>
+            <span>top: {{ w.top_signal }}</span>
+            <span>{{ w.avg_confidence }}% avg conf</span>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="intel-empty">No watchlist triggers yet.</div>
+{% endif %}

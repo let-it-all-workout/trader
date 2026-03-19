@@ -1,0 +1,48 @@
+<div class="news-intel__head">
+    <div class="news-intel__title-wrap">
+        <h3>Nigeria & Africa Business Intelligence</h3>
+        <p class="news-intel__sub">Markets, financial reports, dividends, policy catalysts, and sector momentum.</p>
+    </div>
+    <div class="news-intel__meta">
+        <span class="news-meta-pill">{{ total }} stories</span>
+        <span class="news-meta-pill">{{ updated_label }}</span>
+        <span class="news-meta-pill">refresh 3m</span>
+    </div>
+</div>
+
+{% if !items.is_empty() %}
+<div class="news-grid">
+    {% for n in items %}
+    <a class="news-card" href="{{ n.url }}" target="_blank" rel="noopener">
+        <div class="news-card__media {% if n.image_url.is_empty() %}news-card__media--empty{% endif %}">
+            {% if !n.image_url.is_empty() %}
+            <img src="{{ n.image_url }}" alt="news image" loading="lazy">
+            {% else %}
+            <div class="news-card__placeholder">Market Intel</div>
+            {% endif %}
+        </div>
+        <div class="news-card__body">
+            <div class="news-card__topline">
+                <span class="news-card__source">{{ n.source }}</span>
+                <span class="news-card__dot">&bull;</span>
+                <span class="news-card__time">{{ n.published }}</span>
+            </div>
+            <h4 class="news-card__title">{{ n.title }}</h4>
+            <p class="news-card__summary">{{ n.summary }}</p>
+            <div class="news-card__top">
+                <span class="news-chip">{{ n.region }}</span>
+                <span class="news-chip">{{ n.focus }}</span>
+                <span class="news-chip news-chip--muted">{{ n.tags }}</span>
+            </div>
+        </div>
+        <div class="news-card__score">Score {{ n.score }}</div>
+    </a>
+    {% endfor %}
+</div>
+{% else %}
+<div class="pm__empty">
+    <div class="pm__empty-icon">&#9670;</div>
+    <p>No intelligence stories yet.</p>
+    <p class="pm__empty-sub">Feed updates automatically every 5 minutes.</p>
+</div>
+{% endif %}

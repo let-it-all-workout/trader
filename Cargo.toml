@@ -1,0 +1,20 @@
+[package]
+name = "polym"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+axum = "0.8"
+tokio = { version = "1", features = ["full"] }
+askama = "0.13"
+tower-http = { version = "0.6", features = ["fs"] }
+reqwest = { version = "0.12", default-features = false, features = ["json", "rustls-tls", "gzip", "brotli", "deflate"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+toml = "0.8"
+chrono = { version = "0.4", features = ["serde"] }
+futures = "0.3"
+urlencoding = "2"
+tracing = "0.1"
+tracing-subscriber = "0.3"
+rss = "2"

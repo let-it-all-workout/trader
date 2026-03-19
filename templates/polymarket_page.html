@@ -1,0 +1,68 @@
+<nav class="breadcrumb" id="breadcrumb" hx-swap-oob="true">
+    <span class="crumb"
+          hx-get="/dashboard"
+          hx-target="#content"
+          hx-swap="innerHTML"
+          hx-push-url="/">Dashboard</span>
+    <span class="crumb-sep">/</span>
+    <span class="crumb"
+          hx-get="/agents/polymarket/view"
+          hx-target="#content"
+          hx-swap="innerHTML"
+          hx-push-url="/agents/polymarket">Polymarket</span>
+    <span class="crumb-sep">/</span>
+    <span class="crumb active">Opportunity Scanner</span>
+</nav>
+
+<div class="tool-page" id="polymarket-page">
+    <div class="tool-header">
+        <div class="tool-header-left">
+            <span class="tool-header-icon">◆</span>
+            <div>
+                <h2>Polymarket Scanner</h2>
+                <p class="tool-header-sub">Structural mispricing detection across prediction markets</p>
+            </div>
+        </div>
+        <span class="badge badge-{{ scanner_status }}">{{ scanner_status }}</span>
+    </div>
+
+    <div class="stats-row stats-row--wide">
+        <div class="stat-card accent">
+            <span class="stat-value">{{ total_opps }}</span>
+            <span class="stat-label">Opportunities</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-value">{{ negrisk.len() }}</span>
+            <span class="stat-label">Neg-Risk</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-value">{{ endgame.len() }}</span>
+            <span class="stat-label">Endgame</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-value">{{ correlation.len() }}</span>
+            <span class="stat-label">Correlation</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-value">{{ marketmaking.len() }}</span>
+            <span class="stat-label">Market Making</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-value">{{ crossplatform.len() }}</span>
+            <span class="stat-label">Cross-Platform</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-value">{{ newsarb.len() }}</span>
+            <span class="stat-label">News Arb</span>
+        </div>
+    </div>
+
+    <div class="funding-data"
+         hx-get="/polymarket/status"
+         hx-trigger="every 30s"
+         hx-swap="innerHTML">
+        {% include "polymarket_table.html" %}
+    </div>
+</div>
+
+<script>initPmTabs();</script>

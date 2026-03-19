@@ -1,0 +1,73 @@
+<div class="intel-head">
+    <div>
+        <h3>Alpha & Whale Monitor</h3>
+        <p>Nigeria-first market intelligence with alerts, score ranking, and watchlist triggers.</p>
+    </div>
+    <div class="intel-meta">
+        <span>{{ updated_label }}</span>
+        <span>{{ alerts.len() }} alerts</span>
+        <span>{{ whales.len() }} whale signals</span>
+    </div>
+</div>
+
+<div class="intel-grid">
+    <section class="intel-block">
+        <div class="intel-block__head">
+            <h4>Top Alerts</h4>
+            <small>highest conviction</small>
+        </div>
+        {% include "intel_alerts.html" %}
+    </section>
+
+    <section class="intel-block">
+        <div class="intel-block__head">
+            <h4>Signal Scoreboard</h4>
+            <small>strength, novelty, impact, timing</small>
+        </div>
+        {% include "intel_scoreboard.html" %}
+    </section>
+
+    <section class="intel-block">
+        <div class="intel-block__head">
+            <h4>Watchlists</h4>
+            <small>theme-level trigger density</small>
+        </div>
+        {% include "intel_watchlists.html" %}
+    </section>
+</div>
+
+<section class="intel-playbook">
+    <div class="intel-block__head">
+        <h4>Execution Playbook (Mid-Level Trader)</h4>
+        <small>be early, stay disciplined</small>
+    </div>
+    <div class="intel-playbook__grid">
+        <div class="intel-playbook__card">
+            <h5>Pre-Entry Checklist</h5>
+            <ul>
+                <li>Identify one clear catalyst</li>
+                <li>Confirm with volume/price expansion</li>
+                <li>Define invalidation before entry</li>
+                <li>Require minimum 1:2 risk/reward</li>
+            </ul>
+        </div>
+        <div class="intel-playbook__card">
+            <h5>Position Sizing</h5>
+            <ul>
+                <li>Normal setup: 0.5% to 1.0% risk</li>
+                <li>High-conviction setup: max 1.5% risk</li>
+                <li>Never average down blindly</li>
+                <li>Cut if thesis breaks</li>
+            </ul>
+        </div>
+        <div class="intel-playbook__card">
+            <h5>Capital Split</h5>
+            <ul>
+                <li>60% core investments</li>
+                <li>30% tactical catalyst trades</li>
+                <li>10% high-volatility optional bucket</li>
+                <li>Review weekly and rebalance</li>
+            </ul>
+        </div>
+    </div>
+</section>

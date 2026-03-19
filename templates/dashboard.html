@@ -1,0 +1,36 @@
+<nav class="breadcrumb" id="breadcrumb" hx-swap-oob="true">
+    <span class="crumb active">Dashboard</span>
+</nav>
+<section class="agents-grid"
+        hx-get="/dashboard"
+        hx-trigger="every 15s"
+        hx-select=".agents-grid"
+        hx-swap="outerHTML">
+    {% for agent in agents %}
+    <div class="agent-card clickable"
+         hx-get="/agents/{{ agent.id }}/view"
+         hx-target="#content"
+         hx-swap="innerHTML"
+         hx-push-url="/agents/{{ agent.id }}">
+        <div class="agent-header">
+            <span class="agent-icon">{{ agent.icon }}</span>
+            <h2>{{ agent.name }}</h2>
+            <span class="badge badge-{{ agent.status }}">{{ agent.status }}</span>
+        </div>
+        <p class="agent-desc">{{ agent.description }}</p>
+        {% if let Some(msg) = agent.last_message %}
+        <p class="agent-msg">{{ msg }}</p>
+        {% endif %}
+        {% if let Some(tick) = agent.last_tick %}
+        <p class="agent-tick">last tick: {{ tick.format("%H:%M:%S") }}</p>
+        {% endif %}
+    </div>
+    {% endfor %}
+</section>
+
+<section class="intel-panel"
+         hx-get="/intel/status"
+         hx-trigger="load, every 3m"
+         hx-swap="innerHTML">
+    <div class="news-intel__loading">Loading alpha signals and whale monitoring...</div>
+</section>

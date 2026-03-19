@@ -1,0 +1,42 @@
+<nav class="breadcrumb" id="breadcrumb" hx-swap-oob="true">
+    <span class="crumb"
+          hx-get="/dashboard"
+          hx-target="#content"
+          hx-swap="innerHTML"
+          hx-push-url="/">Dashboard</span>
+    <span class="crumb-sep">/</span>
+    <span class="crumb active">{{ agent.name }}</span>
+</nav>
+<div class="agent-detail">
+    <div class="agent-detail-header">
+        <div class="agent-detail-title">
+            <span class="agent-icon">{{ agent.icon }}</span>
+            <h2>{{ agent.name }}</h2>
+            <span class="badge badge-{{ agent.status }}">{{ agent.status }}</span>
+        </div>
+    </div>
+    <p class="agent-detail-desc">{{ agent.description }}</p>
+    {% if let Some(tick) = agent.last_tick %}
+    <p class="agent-tick">last tick: {{ tick.format("%H:%M:%S UTC") }}</p>
+    {% endif %}
+
+    <div class="sub-tools">
+        <h3 class="section-title">Tools</h3>
+        <div class="sub-tools-grid">
+            {% for tool in tools %}
+            <div class="sub-tool-card"
+                 hx-get="{{ tool.href }}"
+                 hx-target="#content"
+                 hx-swap="innerHTML"
+                 hx-push-url="{{ tool.href }}">
+                <span class="sub-tool-icon">{{ tool.icon }}</span>
+                <div class="sub-tool-info">
+                    <h4>{{ tool.name }}</h4>
+                    <p>{{ tool.description }}</p>
+                </div>
+                <span class="sub-tool-arrow">→</span>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>

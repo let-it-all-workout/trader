@@ -1,0 +1,14 @@
+<div class="agent-card" id="agent-{{ agent.id }}">
+    <div class="agent-header">
+        <span class="agent-icon">{{ agent.icon }}</span>
+        <h2>{{ agent.name }}</h2>
+        <span class="badge badge-{{ agent.status }}">{{ agent.status }}</span>
+    </div>
+    <p class="agent-desc">{{ agent.description }}</p>
+    {% if let Some(msg) = agent.last_message %}
+    <p class="agent-msg">{{ msg }}</p>
+    {% endif %}
+    {% if let Some(tick) = agent.last_tick %}
+    <p class="agent-tick">last tick: {{ tick.format("%H:%M:%S") }}</p>
+    {% endif %}
+</div>

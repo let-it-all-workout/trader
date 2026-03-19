@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>POLYM</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <script src="https://unpkg.com/htmx.org@2.0.4"></script>
+    <script>htmx.config.allowScriptTags = true;</script>
+    <script src="/static/polymarket.js"></script>
+</head>
+<body>
+    <header>
+        <div class="header-left">
+            <h1>POLYM</h1>
+            <span class="tagline">trading stack</span>
+        </div>
+        <div class="header-right">
+            <span class="status-indicator online"></span>
+            <span class="status-text">SYSTEM ONLINE</span>
+        </div>
+    </header>
+
+    <main>
+        <nav class="breadcrumb" id="breadcrumb">
+        </nav>
+
+        <div id="content">
+            {% include "dashboard.html" %}
+        </div>
+    </main>
+
+    <footer>
+        <span>polym v{{ version }}</span>
+        <span class="sep">·</span>
+        <span>personal use only</span>
+    </footer>
+
+</body>
+</html>

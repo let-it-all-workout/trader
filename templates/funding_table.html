@@ -1,0 +1,200 @@
+{% if !arbs.is_empty() || !stable_arbs.is_empty() %}
+<div class="arb-section">
+    <div class="arb-header">
+        <h3>Opportunities</h3>
+        <div class="arb-tabs" id="arbTabs">
+            <a class="arb-tab active" data-tab="hot" href="javascript:void(0)">
+                Hot <span class="tab-count">{{ total_arbs }}</span>
+            </a>
+            <a class="arb-tab" data-tab="stable" href="javascript:void(0)">
+                Stable <span class="tab-count">{{ stable_arbs.len() }}</span>
+            </a>
+        </div>
+    </div>
+
+    <div id="arb-hot" class="arb-pane show">
+        {% if !arbs.is_empty() %}
+        <p class="arb-subtitle">{{ total_arbs }} found · top {{ arbs.len() }} by spread</p>
+        <div class="arb-grid">
+            {% for arb in arbs %}
+            <div class="arb-card {% if arb.spread_annual > 100.0 %}arb-hot{% endif %}">
+                <div class="arb-top">
+                    <span class="arb-symbol">{{ arb.symbol }}</span>
+                    <span class="arb-apr {% if arb.spread_annual > 100.0 %}apr-hot{% endif %}">{{ arb.spread_annual|fmt("{:.1}") }}%</span>
+                </div>
+                <div class="arb-legs">
+                    <div class="arb-leg leg-long">
+                        <span class="leg-dir">LONG</span>
+                        <span class="leg-venue">{{ arb.long_venue }}</span>
+                        <div class="leg-rates">
+                            <span class="leg-8h neg">{{ arb.long_rate_8h|fmt("{:+.4}") }}%<small>/8h</small></span>
+                            <span class="leg-ann neg">{{ arb.long_rate_annual|fmt("{:+.1}") }}%<small>APR</small></span>
+                        </div>
+                    </div>
+                    <span class="arb-sep">⟶</span>
+                    <div class="arb-leg leg-short">
+                        <span class="leg-dir">SHORT</span>
+                        <span class="leg-venue">{{ arb.short_venue }}</span>
+                        <div class="leg-rates">
+                            <span class="leg-8h pos">{{ arb.short_rate_8h|fmt("{:+.4}") }}%<small>/8h</small></span>
+                            <span class="leg-ann pos">{{ arb.short_rate_annual|fmt("{:+.1}") }}%<small>APR</small></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="arb-bottom">
+                    <span>Spread: {{ arb.spread_8h|fmt("{:.4}") }}% /8h</span>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="arb-empty">No volatile opportunities right now</p>
+        {% endif %}
+    </div>
+
+    <div id="arb-stable" class="arb-pane">
+        {% if !stable_arbs.is_empty() %}
+        <p class="arb-subtitle">{{ stable_arbs.len() }} consistent opportunities · averaged across scans</p>
+        <div class="arb-grid">
+            {% for arb in stable_arbs %}
+            <div class="arb-card arb-stable-card">
+                <div class="arb-top">
+                    <span class="arb-symbol">{{ arb.symbol }}</span>
+                    <span class="arb-apr stable-apr">{{ arb.avg_spread_annual|fmt("{:.1}") }}%</span>
+                </div>
+                <div class="stable-meta">
+                    <span class="stable-badge">{{ (arb.consistency * 100.0)|fmt("{:.0}") }}% consistent</span>
+                    <span class="stable-samples">{{ arb.samples }} scans</span>
+                </div>
+                <div class="arb-legs">
+                    <div class="arb-leg leg-long">
+                        <span class="leg-dir">LONG</span>
+                        <span class="leg-venue">{{ arb.long_venue }}</span>
+                        <span class="leg-ann neg">{{ arb.long_avg_annual|fmt("{:+.1}") }}%<small>avg APR</small></span>
+                    </div>
+                    <span class="arb-sep">⟶</span>
+                    <div class="arb-leg leg-short">
+                        <span class="leg-dir">SHORT</span>
+                        <span class="leg-venue">{{ arb.short_venue }}</span>
+                        <span class="leg-ann pos">{{ arb.short_avg_annual|fmt("{:+.1}") }}%<small>avg APR</small></span>
+                    </div>
+                </div>
+                <div class="arb-bottom">
+                    <span>Now: {{ arb.current_spread_annual|fmt("{:.1}") }}%</span>
+                    <span>Avg: {{ arb.avg_spread_annual|fmt("{:.1}") }}%</span>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="arb-empty">Collecting data — stable strategies appear after 3 scan cycles</p>
+        {% endif %}
+    </div>
+</div>
+{% endif %}
+
+{% if !rates.is_empty() %}
+<div class="rates-section">
+    <div class="section-head">
+        <h3>All Rates</h3>
+        <span class="section-count">{{ rates.len() }} markets</span>
+        <div class="table-search">
+            <input type="text" id="rateSearch" placeholder="Search symbol..." oninput="filterTable(this.value)" autocomplete="off" spellcheck="false">
+        </div>
+    </div>
+    <div class="table-container">
+        <table class="rates-table" id="ratesTable">
+            <thead>
+                <tr>
+                    <th>Exchange</th>
+                    <th>Symbol</th>
+                    <th>Norm</th>
+                    <th class="col-right">8h Rate</th>
+                    <th class="col-right">Annual</th>
+                    <th class="col-right">Price</th>
+                    <th class="col-right">OI</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for rate in rates %}
+                <tr data-symbol="{{ rate.normalized }}" data-exchange="{{ rate.exchange }}">
+                    <td class="cell-exchange">{{ rate.exchange }}</td>
+                    <td class="cell-symbol">{{ rate.symbol }}</td>
+                    <td class="cell-norm">{{ rate.normalized }}</td>
+                    <td class="cell-rate col-right {% if rate.rate_8h_pct > 0.0 %}pos{% else %}neg{% endif %}">
+                        {{ rate.rate_8h_pct|fmt("{:+.4}") }}%
+                    </td>
+                    <td class="cell-annual col-right {% if rate.rate_annual_pct > 0.0 %}pos{% else %}neg{% endif %}">
+                        {{ rate.rate_annual_pct|fmt("{:+.1}") }}%
+                    </td>
+                    <td class="cell-price col-right">
+                        {% match rate.mark_price %}
+                            {% when Some with (p) %}
+                                {% if *p > 1000.0 %}${{ p|fmt("{:.0}") }}{% else if *p > 1.0 %}${{ p|fmt("{:.2}") }}{% else %}${{ p|fmt("{:.6}") }}{% endif %}
+                            {% when None %}-
+                        {% endmatch %}
+                    </td>
+                    <td class="cell-oi col-right">
+                        {% match rate.open_interest %}
+                            {% when Some with (oi) %}
+                                {% if *oi > 1_000_000.0 %}${{ (oi / 1_000_000.0)|fmt("{:.1}") }}M{% else if *oi > 1_000.0 %}${{ (oi / 1_000.0)|fmt("{:.0}") }}K{% else %}${{ oi|fmt("{:.0}") }}{% endif %}
+                            {% when None %}-
+                        {% endmatch %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+function filterTable(q) {
+    q = q.toLowerCase();
+    var rows = document.querySelectorAll('#ratesTable tbody tr');
+    for (var i = 0; i < rows.length; i++) {
+        var sym = (rows[i].getAttribute('data-symbol') || '').toLowerCase();
+        var ex = (rows[i].getAttribute('data-exchange') || '').toLowerCase();
+        rows[i].style.display = (!q || sym.indexOf(q) !== -1 || ex.indexOf(q) !== -1) ? '' : 'none';
+    }
+}
+</script>
+{% else %}
+<div class="empty-state"
+     hx-get="/funding/status"
+     hx-trigger="every 2s"
+     hx-swap="innerHTML"
+     hx-target="closest .funding-data">
+    <span class="empty-icon">◎</span>
+    <p>No funding rate data yet</p>
+    <p class="empty-sub">Scanner is running, data will appear shortly...</p>
+</div>
+{% endif %}
+
+<script>
+(function() {
+    var saved = (typeof window._arbTab === 'string') ? window._arbTab : 'hot';
+    var tabs = document.querySelectorAll('#arbTabs .arb-tab');
+    var panes = document.querySelectorAll('.arb-pane');
+    if (!tabs.length) return;
+
+    function activate(name) {
+        window._arbTab = name;
+        tabs.forEach(function(t) {
+            t.classList.toggle('active', t.getAttribute('data-tab') === name);
+        });
+        panes.forEach(function(p) {
+            p.classList.toggle('show', p.id === 'arb-' + name);
+        });
+    }
+
+    tabs.forEach(function(t) {
+        t.addEventListener('click', function(e) {
+            e.preventDefault();
+            activate(this.getAttribute('data-tab'));
+        });
+    });
+
+    activate(saved);
+})();
+</script>

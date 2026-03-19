@@ -1,0 +1,11 @@
+.git
+target
+node_modules
+venv
+*.png
+*.jpg
+*.jpeg
+*.webp
+*.log
+.cursor
+agent-transcripts

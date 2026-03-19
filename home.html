@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>POLYM</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <script src="https://unpkg.com/htmx.org@2.0.4"></script>
+</head>
+<body>
+    <header>
+        <div class="header-left">
+            <h1>POLYM</h1>
+            <span class="tagline">trading stack</span>
+        </div>
+        <div class="header-right">
+            <span class="status-indicator online"></span>
+            <span class="status-text">SYSTEM ONLINE</span>
+        </div>
+    </header>
+
+    <main>
+        <nav class="breadcrumb" id="breadcrumb">
+        </nav>
+
+        <div id="content">
+            <nav class="breadcrumb" id="breadcrumb" hx-swap-oob="true">
+    <span class="crumb active">Dashboard</span>
+</nav>
+<section class="agents-grid">
+    
+    <div class="agent-card clickable"
+         hx-get="/agents/analytics/view"
+         hx-target="#content"
+         hx-swap="innerHTML"
+         hx-push-url="/agents/analytics">
+        <div class="agent-header">
+            <span class="agent-icon">◈</span>
+            <h2>Analytics</h2>
+            <span class="badge badge-offline">offline</span>
+        </div>
+        <p class="agent-desc">Tracks P&#38;L, portfolio stats, and performance</p>
+        
+        
+    </div>
+    
+    <div class="agent-card clickable"
+         hx-get="/agents/executor/view"
+         hx-target="#content"
+         hx-swap="innerHTML"
+         hx-push-url="/agents/executor">
+        <div class="agent-header">
+            <span class="agent-icon">⚡</span>
+            <h2>Executor</h2>
+            <span class="badge badge-offline">offline</span>
+        </div>
+        <p class="agent-desc">Places and manages trade orders</p>
+        
+        
+    </div>
+    
+    <div class="agent-card clickable"
+         hx-get="/agents/scanner/view"
+         hx-target="#content"
+         hx-swap="innerHTML"
+         hx-push-url="/agents/scanner">
+        <div class="agent-header">
+            <span class="agent-icon">⊙</span>
+            <h2>Scanner</h2>
+            <span class="badge badge-running">running</span>
+        </div>
+        <p class="agent-desc">Scans DEX perp funding rates for arbitrage</p>
+        
+        <p class="agent-msg">💰 &#60;b&#62;Funding Rate Arb Opportunities&#60;/b&#62;
+
+1. &#60;b&#62;JTO&#60;/b&#62;
+   Long Backpack [JTO_USDC_PERP] (-0.1759%)
+   Short Drift [JTO-PERP] (+12.8648%)
+   Spread: 13.0407% (8h) | 14279.6% APR
+
+2. &#60;b&#62;BERA&#60;/b&#62;
+   Long Backpack [BERA_USDC_PERP] (-0.0940%)
+   Short Drift [BERA-PERP] (+8.2312%)
+   Spread: 8.3252% (8h) | 9116.1% APR
+
+3. &#60;b&#62;MNT&#60;/b&#62;
+   Long Drift [MNT-PERP] (-7.6064%)
+   Short Orderly [PERP_MNT_USDC] (+0.0100%)
+   Spread: 7.6164% (8h) | 8340.0% APR
+
+4. &#60;b&#62;2Z&#60;/b&#62;
+   Long Backpack [2Z_USDC_PERP] (-0.0232%)
+   Short Drift [2Z-PERP] (+7.1368%)
+   Spread: 7.1600% (8h) | 7840.2% APR
+
+5. &#60;b&#62;LINK&#60;/b&#62;
+   Long Orderly [PERP_LINK_USDC] (-0.0091%)
+   Short Drift [LINK-PERP] (+7.0840%)
+   Spread: 7.0931% (8h) | 7766.9% APR
+
+</p>
+        
+        
+        <p class="agent-tick">last tick: 18:13:05</p>
+        
+    </div>
+    
+    <div class="agent-card clickable"
+         hx-get="/agents/signals/view"
+         hx-target="#content"
+         hx-swap="innerHTML"
+         hx-push-url="/agents/signals">
+        <div class="agent-header">
+            <span class="agent-icon">△</span>
+            <h2>Signals</h2>
+            <span class="badge badge-offline">offline</span>
+        </div>
+        <p class="agent-desc">Analyzes data streams to generate signals</p>
+        
+        
+    </div>
+    
+</section>
+        </div>
+    </main>
+
+    <footer>
+        <span>polym v0.1.0</span>
+        <span class="sep">·</span>
+        <span>personal use only</span>
+    </footer>
+</body>
+</html>

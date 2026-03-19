@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>POLYM</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <script src="https://unpkg.com/htmx.org@2.0.4"></script>
+</head>
+<body>
+    <header>
+        <div class="header-left">
+            <h1>POLYM</h1>
+            <span class="tagline">trading stack</span>
+        </div>
+        <div class="header-right">
+            <span class="status-indicator online"></span>
+            <span class="status-text">SYSTEM ONLINE</span>
+        </div>
+    </header>
+
+    <main>
+        <nav class="breadcrumb" id="breadcrumb">
+        </nav>
+
+        <div id="content">
+            <nav class="breadcrumb" id="breadcrumb" hx-swap-oob="true">
+    <span class="crumb active">Dashboard</span>
+</nav>
+<section class="agents-grid"
+        hx-get="/dashboard"
+        hx-trigger="every 15s"
+        hx-target="#content"
+        hx-swap="innerHTML">
+    
+    <div class="agent-card clickable"
+         hx-get="/agents/analytics/view"
+         hx-target="#content"
+         hx-swap="innerHTML"
+         hx-push-url="/agents/analytics">
+        <div class="agent-header">
+            <span class="agent-icon">◈</span>
+            <h2>Analytics</h2>
+            <span class="badge badge-offline">offline</span>
+        </div>
+        <p class="agent-desc">Tracks P&#38;L, portfolio stats, and performance</p>
+        
+        
+    </div>
+    
+    <div class="agent-card clickable"
+         hx-get="/agents/executor/view"
+         hx-target="#content"
+         hx-swap="innerHTML"
+         hx-push-url="/agents/executor">
+        <div class="agent-header">
+            <span class="agent-icon">⚡</span>
+            <h2>Executor</h2>
+            <span class="badge badge-offline">offline</span>
+        </div>
+        <p class="agent-desc">Places and manages trade orders</p>
+        
+        
+    </div>
+    
+    <div class="agent-card clickable"
+         hx-get="/agents/polymarket/view"
+         hx-target="#content"
+         hx-swap="innerHTML"
+         hx-push-url="/agents/polymarket">
+        <div class="agent-header">
+            <span class="agent-icon">◆</span>
+            <h2>Polymarket</h2>
+            <span class="badge badge-running">running</span>
+        </div>
+        <p class="agent-desc">Scans Polymarket for structural mispricing and opportunities</p>
+        
+        <p class="agent-msg">138 opportunities · NR: Netflix (NFLX) close... 28.9% · EG: 1916% APR 2d · CO: 50 mismatch</p>
+        
+        
+        <p class="agent-tick">last tick: 07:19:14</p>
+        
+    </div>
+    
+    <div class="agent-card clickable"
+         hx-get="/agents/scanner/view"
+         hx-target="#content"
+         hx-swap="innerHTML"
+         hx-push-url="/agents/scanner">
+        <div class="agent-header">
+            <span class="agent-icon">⊙</span>
+            <h2>Scanner</h2>
+            <span class="badge badge-running">running</span>
+        </div>
+        <p class="agent-desc">Scans DEX perp funding rates for arbitrage</p>
+        
+        <p class="agent-msg">271 arbs found · MAVIA 438% · CRCL 368% · CLOUD 324% +268 more</p>
+        
+        
+        <p class="agent-tick">last tick: 07:19:22</p>
+        
+    </div>
+    
+    <div class="agent-card clickable"
+         hx-get="/agents/signals/view"
+         hx-target="#content"
+         hx-swap="innerHTML"
+         hx-push-url="/agents/signals">
+        <div class="agent-header">
+            <span class="agent-icon">△</span>
+            <h2>Signals</h2>
+            <span class="badge badge-offline">offline</span>
+        </div>
+        <p class="agent-desc">Analyzes data streams to generate signals</p>
+        
+        
+    </div>
+    
+</section>
+        </div>
+    </main>
+
+    <footer>
+        <span>polym v0.1.0</span>
+        <span class="sep">·</span>
+        <span>personal use only</span>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,34 @@
+{% if !alerts.is_empty() %}
+<div class="intel-alerts">
+    {% for a in alerts %}
+    <a class="intel-alert-card" href="{{ a.url }}" target="_blank" rel="noopener">
+        <div class="intel-alert-card__top">
+            <span class="intel-badge">{{ a.event_type }}</span>
+            <span class="intel-confidence">{{ a.confidence }}%</span>
+        </div>
+        <h5>{{ a.title }}</h5>
+        <p>{{ a.reasons }}</p>
+        <div class="intel-alert-card__meta">
+            <span>{{ a.source }}</span>
+            <span>{{ a.published }}</span>
+            <span>{{ a.focus }} / {{ a.region }}</span>
+        </div>
+    </a>
+    {% endfor %}
+</div>
+{% else %}
+<div class="intel-empty">No alerts yet.</div>
+{% endif %}
+
+{% if !whales.is_empty() %}
+<div class="intel-whales">
+    <div class="intel-whales__title">Whale Signals</div>
+    {% for w in whales %}
+    <a class="intel-whale-row" href="{{ w.url }}" target="_blank" rel="noopener">
+        <span class="intel-whale-row__type">{{ w.signal_type }}</span>
+        <span class="intel-whale-row__text">{{ w.headline }}</span>
+        <span class="intel-whale-row__conf">{{ w.confidence }}%</span>
+    </a>
+    {% endfor %}
+</div>
+{% endif %}

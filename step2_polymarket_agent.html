@@ -1,0 +1,42 @@
+<nav class="breadcrumb" id="breadcrumb" hx-swap-oob="true">
+    <span class="crumb"
+          hx-get="/dashboard"
+          hx-target="#content"
+          hx-swap="innerHTML"
+          hx-push-url="/">Dashboard</span>
+    <span class="crumb-sep">/</span>
+    <span class="crumb active">Polymarket</span>
+</nav>
+<div class="agent-detail">
+    <div class="agent-detail-header">
+        <div class="agent-detail-title">
+            <span class="agent-icon">◆</span>
+            <h2>Polymarket</h2>
+            <span class="badge badge-running">running</span>
+        </div>
+    </div>
+    <p class="agent-detail-desc">Scans Polymarket for structural mispricing and opportunities</p>
+    
+    <p class="agent-tick">last tick: 07:19:14 UTC</p>
+    
+
+    <div class="sub-tools">
+        <h3 class="section-title">Tools</h3>
+        <div class="sub-tools-grid">
+            
+            <div class="sub-tool-card"
+                 hx-get="/polymarket/scanner"
+                 hx-target="#content"
+                 hx-swap="innerHTML"
+                 hx-push-url="/polymarket/scanner">
+                <span class="sub-tool-icon">◆</span>
+                <div class="sub-tool-info">
+                    <h4>Opportunity Scanner</h4>
+                    <p>Neg-risk, endgame, and correlation mispricing detection</p>
+                </div>
+                <span class="sub-tool-arrow">→</span>
+            </div>
+            
+        </div>
+    </div>
+</div>

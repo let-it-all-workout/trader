@@ -1,0 +1,164 @@
+[server]
+port = 3000
+
+[telegram]
+bot_token = ""  # your Telegram bot token from @BotFather
+
+[telegram.channels]
+# Map channel names to Telegram chat IDs
+# default = "-1001234567890"
+# scanner = "-1009876543210"
+# signals = "-1001112223334"
+
+[agents.scanner]
+enabled = true
+interval_secs = 30
+telegram_channel = "scanner"
+
+[agents.executor]
+enabled = true
+interval_secs = 10
+
+[agents.analytics]
+enabled = true
+interval_secs = 60
+telegram_channel = "analytics"
+
+[agents.signals]
+enabled = true
+interval_secs = 15
+telegram_channel = "signals"
+
+[news]
+enabled = true
+refresh_secs = 180
+extra_keywords = ["dangote", "refinery", "ipo", "bpe", "ngx", "agriculture", "financial sector", "earnings report", "dividend", "qualification date", "closure of register", "top gainer", "stock price spike", "banking", "insurance", "uk exchange", "london stock exchange", "lse", "dual listing", "cross listing", "gdr", "zenith bank"]
+google_queries = [
+  "Nigeria tech startup funding unicorn fintech venture capital",
+  "Nigeria NGX financial sector earnings report dividend qualification date",
+  "NGX top gainers stock spike rally surge Nigeria",
+  "Nigeria crypto regulation exchange stablecoin market",
+  "Africa startup funding unicorn exits IPO",
+  "Zenith Bank UK exchange listing London Stock Exchange dual listing",
+  "Nigeria power sector IPO DisCo GenCo privatization",
+  "AI chips cloud data center model application market"
+]
+
+[[news.sources]]
+name = "Nigeria Business Markets"
+url = "https://news.google.com/rss/search?q=Nigeria+business+markets+IPO+power"
+enabled = true
+priority = 12
+
+[[news.sources]]
+name = "BPE Power IPO Focus"
+url = "https://news.google.com/rss/search?q=BPE+DisCo+GenCo+IPO+Nigeria"
+enabled = true
+priority = 15
+
+[[news.sources]]
+name = "Africa Business Markets"
+url = "https://news.google.com/rss/search?q=Africa+business+markets+investment"
+enabled = true
+priority = 10
+
+[[news.sources]]
+name = "AI Infrastructure and Markets"
+url = "https://news.google.com/rss/search?q=AI+chips+cloud+data+center+markets"
+enabled = true
+priority = 8
+
+[[news.sources]]
+name = "Agriculture and Commodities"
+url = "https://news.google.com/rss/search?q=Nigeria+Africa+agriculture+commodities+markets"
+enabled = true
+priority = 9
+
+[[news.sources]]
+name = "NGX Financial Reports and Dividends"
+url = "https://news.google.com/rss/search?q=NGX+Nigeria+financial+sector+earnings+report+dividend+qualification+date"
+enabled = true
+priority = 16
+
+[[news.sources]]
+name = "NGX Stock Price Spikes"
+url = "https://news.google.com/rss/search?q=NGX+top+gainers+stock+price+surge+rally+Nigeria"
+enabled = true
+priority = 15
+
+[[news.sources]]
+name = "Nigeria Banking and Insurance Markets"
+url = "https://news.google.com/rss/search?q=Nigeria+banking+insurance+stocks+results+dividend"
+enabled = true
+priority = 14
+
+[[news.sources]]
+name = "Nigeria UK Cross Listing"
+url = "https://news.google.com/rss/search?q=Nigeria+company+UK+exchange+listing+LSE"
+enabled = true
+priority = 16
+
+[[news.sources]]
+name = "Zenith UK Listing Watch"
+url = "https://news.google.com/rss/search?q=Zenith+Bank+UK+exchange+listing"
+enabled = true
+priority = 18
+
+[premium_feeds.ngx_microstructure]
+enabled = false
+provider = ""
+endpoint = ""
+api_key = ""
+poll_secs = 180
+
+[premium_feeds.filings_insider]
+enabled = false
+provider = ""
+endpoint = ""
+api_key = ""
+poll_secs = 300
+
+[premium_feeds.institutional_flow]
+enabled = false
+provider = ""
+endpoint = ""
+api_key = ""
+poll_secs = 300
+
+[news.brave]
+enabled = true
+# Set BRAVE_API_KEY env var in Railway (preferred)
+api_key = ""
+queries = [
+  "Nigeria stock market unusual volume block trade",
+  "NGX insider dealing director transactions",
+  "Nigeria startup funding round term sheet",
+  "Nigeria crypto whale move exchange inflow",
+  "Zenith Bank UK exchange listing London Stock Exchange",
+  "Nigeria power sector IPO DisCo GenCo listing",
+  "Africa startup unicorn funding valuation round"
+]
+
+[news.twitter_scan]
+enabled = true
+nitter_rss_base = "https://nitter.poast.org"
+nitter_rss_bases = [
+  "https://nitter.poast.org",
+  "https://nitter.privacydev.net",
+  "https://nitter.1d4.us",
+  "https://nitter.esmailelbob.xyz"
+]
+
+[news.twitter_browser]
+enabled = true
+script_path = "twitter_collector.js"
+base_url = "https://x.com"
+headless = true
+per_query_limit = 8
+queries = [
+  "NGX dividend earnings surprise",
+  "Zenith Bank UK exchange listing",
+  "Nigeria startup funding unicorn",
+  "Nigeria crypto whale flow",
+  "DisCo GenCo IPO Nigeria"
+]

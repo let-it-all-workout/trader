@@ -1,0 +1,66 @@
+<nav class="breadcrumb" id="breadcrumb" hx-swap-oob="true">
+    <span class="crumb"
+          hx-get="/dashboard"
+          hx-target="#content"
+          hx-swap="innerHTML"
+          hx-push-url="/">Dashboard</span>
+    <span class="crumb-sep">/</span>
+    <span class="crumb"
+          hx-get="/agents/scanner/view"
+          hx-target="#content"
+          hx-swap="innerHTML"
+          hx-push-url="/agents/scanner">Scanner</span>
+    <span class="crumb-sep">/</span>
+    <span class="crumb active">Funding Rates</span>
+</nav>
+
+<div class="tool-page" id="funding-page">
+    <div class="tool-header">
+        <div class="tool-header-left">
+            <span class="tool-header-icon">◎</span>
+            <div>
+                <h2>Funding Rate Scanner</h2>
+                <p class="tool-header-sub">Cross-exchange perp funding rate arbitrage</p>
+            </div>
+        </div>
+        <span class="badge badge-{{ scanner_status }}">{{ scanner_status }}</span>
+    </div>
+
+    <div class="stats-row">
+        <div class="stat-card">
+            <span class="stat-value">{{ num_exchanges }}</span>
+            <span class="stat-label">Exchanges</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-value">{{ total_markets }}</span>
+            <span class="stat-label">Markets</span>
+        </div>
+        <div class="stat-card accent">
+            <span class="stat-value">{{ total_arbs }}</span>
+            <span class="stat-label">Arb Opportunities</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-value">{% if !arbs.is_empty() %}{{ arbs[0].spread_annual|fmt("{:.0}") }}%{% else %}-{% endif %}</span>
+            <span class="stat-label">Best APR</span>
+        </div>
+    </div>
+
+    <div class="filter-bar">
+        <span class="filter-label">Exchanges</span>
+        <div class="filter-chips">
+            {% for ex in exchanges %}
+            <button class="chip {% if ex.1 %}chip-on{% endif %}"
+                    hx-post="/funding/toggle/{{ ex.0 }}"
+                    hx-target="#content"
+                    hx-swap="innerHTML">{{ ex.0 }}</button>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="funding-data"
+         hx-get="/funding/status"
+         hx-trigger="every 15s"
+         hx-swap="innerHTML">
+        {% include "funding_table.html" %}
+    </div>
+</div>

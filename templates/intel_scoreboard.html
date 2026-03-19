@@ -1,0 +1,32 @@
+{% if !scoreboard.is_empty() %}
+<div class="intel-scoreboard">
+    <table>
+        <thead>
+            <tr>
+                <th>Signal</th>
+                <th>Type</th>
+                <th>Confidence</th>
+                <th>S</th>
+                <th>N</th>
+                <th>I</th>
+                <th>T</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for s in scoreboard %}
+            <tr>
+                <td><a href="{{ s.url }}" target="_blank" rel="noopener">{{ s.title }}</a></td>
+                <td>{{ s.event_type }}</td>
+                <td>{{ s.confidence }}%</td>
+                <td>{{ s.signal_strength }}</td>
+                <td>{{ s.novelty }}</td>
+                <td>{{ s.impact }}</td>
+                <td>{{ s.timing }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div class="intel-empty">No scoreboard data yet.</div>
+{% endif %}

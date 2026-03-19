@@ -1,0 +1,274 @@
+{% if total_opps > 0 %}
+<div class="pm">
+    <div class="pm__tabs" id="pmTabs">
+        <a class="pm__tab active" data-tab="negrisk" href="javascript:void(0)">Neg-Risk<b>{{ negrisk.len() }}</b></a>
+        <a class="pm__tab" data-tab="endgame" href="javascript:void(0)">Endgame<b>{{ endgame.len() }}</b></a>
+        <a class="pm__tab" data-tab="correlation" href="javascript:void(0)">Correlation<b>{{ correlation.len() }}</b></a>
+        <a class="pm__tab" data-tab="marketmaking" href="javascript:void(0)">Market Making<b>{{ marketmaking.len() }}</b></a>
+        <a class="pm__tab" data-tab="crossplatform" href="javascript:void(0)">Cross-Platform<b>{{ crossplatform.len() }}</b></a>
+        <a class="pm__tab" data-tab="newsarb" href="javascript:void(0)">News Arb<b>{{ newsarb.len() }}</b></a>
+    </div>
+
+    <!-- NEG-RISK -->
+    <div id="pm-negrisk" class="arb-pane show">
+    {% if !negrisk.is_empty() %}
+        <div class="pm__cards">
+        {% for opp in negrisk %}
+        <div class="pm-c {% if opp.profit_margin_pct > 5.0 %}pm-c--hot{% endif %}"
+             data-pm="negrisk"
+             data-title="{{ opp.event_title }}"
+             data-url="{{ opp.url }}"
+             data-pct="{{ opp.profit_margin_pct }}"
+             data-outcomes="{{ opp.num_outcomes }}"
+             data-sum="{{ opp.yes_sum }}"
+             data-mispricing="{{ opp.mispricing }}"
+             data-vol="{{ opp.volume_24h }}"
+             data-liq="{{ opp.liquidity }}">
+            <div class="pm-c__top">
+                <span class="pm-c__title">{{ opp.event_title }}</span>
+            </div>
+            <div class="pm-c__bar-track">
+                <div class="pm-c__bar" style="width:min({{ opp.profit_margin_pct * 2.5 }}%,100%)"></div>
+            </div>
+            <div class="pm-c__bottom">
+                <div class="pm-c__chips">
+                    <span>{{ opp.num_outcomes }} outcomes</span>
+                    <span class="mono">Σ ${{ opp.yes_sum|fmt("{:.2}") }}</span>
+                    {% if opp.mispricing > 0.0 %}<span class="red">OVER</span>{% else %}<span class="green">UNDER</span>{% endif %}
+                </div>
+                <span class="pm-c__pct {% if opp.profit_margin_pct > 5.0 %}hot{% endif %}">{{ opp.profit_margin_pct|fmt("{:.1}") }}%</span>
+            </div>
+            <div class="pm-c__outcomes-data" style="display:none">
+                {% for o in opp.outcomes %}
+                <div data-q="{{ o.question }}" data-p="{{ o.yes_price }}"></div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+        </div>
+    {% else %}
+        <div class="pm__empty">No negative risk opportunities detected</div>
+    {% endif %}
+    </div>
+
+    <!-- ENDGAME -->
+    <div id="pm-endgame" class="arb-pane">
+    {% if !endgame.is_empty() %}
+        <div class="pm__cards">
+        {% for opp in endgame %}
+        <div class="pm-c"
+             data-pm="endgame"
+             data-title="{{ opp.question }}"
+             data-url="{{ opp.url }}"
+             data-side="{{ opp.side }}"
+             data-price="{{ opp.buy_price }}"
+             data-profit="{{ opp.profit_pct }}"
+             data-days="{{ opp.days_to_resolution }}"
+             data-apr="{{ opp.annualized_return }}"
+             data-vol="{{ opp.volume_24h }}"
+             data-liq="{{ opp.liquidity }}">
+            <div class="pm-c__top">
+                <span class="pm-c__title">{{ opp.question }}</span>
+            </div>
+            <div class="pm-c__bar-track">
+                <div class="pm-c__bar pm-c__bar--eg" style="width:min({{ opp.profit_pct * 5.0 }}%,100%)"></div>
+            </div>
+            <div class="pm-c__bottom">
+                <div class="pm-c__chips">
+                    <span class="{% if opp.side == "YES" %}green{% else %}red{% endif %}">{{ opp.side }}</span>
+                    <span class="mono">${{ opp.buy_price|fmt("{:.3}") }}</span>
+                    <span>{{ opp.days_to_resolution }}d left</span>
+                </div>
+                <div class="pm-c__nums">
+                    <span class="pm-c__pct">+{{ opp.profit_pct|fmt("{:.1}") }}%</span>
+                    <span class="pm-c__apr">${{ (1.0 - opp.buy_price)|fmt("{:.3}") }}/share</span>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+        </div>
+    {% else %}
+        <div class="pm__empty">No endgame opportunities detected</div>
+    {% endif %}
+    </div>
+
+    <!-- CORRELATION -->
+    <div id="pm-correlation" class="arb-pane">
+    {% if !correlation.is_empty() %}
+        <div class="pm__cards">
+        {% for opp in correlation %}
+        <div class="pm-c pm-c--corr"
+             data-pm="correlation"
+             data-title="{{ opp.event_title }}"
+             data-url="{{ opp.url }}"
+             data-pct="{{ opp.roi_pct }}"
+             data-spread="{{ opp.inconsistency_pct }}"
+             data-num="{{ opp.num_children }}"
+             data-sum="{{ opp.child_sum }}">
+            <div class="pm-c__top">
+                <span class="pm-c__title">{{ opp.event_title }}</span>
+            </div>
+            <div class="pm-c__bar-track">
+                <div class="pm-c__bar pm-c__bar--corr" style="width:min({{ opp.roi_pct * 3.0 }}%,100%)"></div>
+            </div>
+            <div class="pm-c__bottom">
+                <div class="pm-c__chips">
+                    <span>{{ opp.num_children }} markets</span>
+                    <span class="mono">Σ ${{ opp.child_sum|fmt("{:.2}") }}</span>
+                </div>
+                <span class="pm-c__pct">+{{ opp.roi_pct|fmt("{:.1}") }}%</span>
+            </div>
+            <div class="pm-c__outcomes-data" style="display:none">
+                {% for d in opp.details %}
+                <div data-q="{{ d.question }}" data-p="{{ d.yes_price }}"></div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+        </div>
+    {% else %}
+        <div class="pm__empty">No correlation inconsistencies detected</div>
+    {% endif %}
+    </div>
+
+    <!-- MARKET MAKING -->
+    <div id="pm-marketmaking" class="arb-pane">
+    {% if !marketmaking.is_empty() %}
+        <div class="pm__cards">
+        {% for opp in marketmaking %}
+        <div class="pm-c pm-c--mm"
+             data-pm="marketmaking"
+             data-title="{{ opp.question }}"
+             data-url="{{ opp.url }}"
+             data-bid="{{ opp.best_bid }}"
+             data-ask="{{ opp.best_ask }}"
+             data-spread="{{ opp.spread_pct }}"
+             data-mid="{{ opp.mid_price }}"
+             data-vol="{{ opp.volume_24h }}"
+             data-liq="{{ opp.liquidity }}"
+             data-bid-depth="{{ opp.bid_depth }}"
+             data-ask-depth="{{ opp.ask_depth }}">
+            <div class="pm-c__top">
+                <span class="pm-c__title">{{ opp.question }}</span>
+            </div>
+            <div class="pm-c__bar-track">
+                <div class="pm-c__bar pm-c__bar--mm" style="width:min({{ opp.spread_pct * 5.0 }}%,100%)"></div>
+            </div>
+            <div class="pm-c__bottom">
+                <div class="pm-c__chips">
+                    <span class="mono">Bid ${{ opp.best_bid|fmt("{:.3}") }}</span>
+                    <span class="mono">Ask ${{ opp.best_ask|fmt("{:.3}") }}</span>
+                    <span>Vol ${{ opp.volume_24h|fmt("{:.0}") }}</span>
+                </div>
+                <span class="pm-c__pct">{{ opp.spread_pct|fmt("{:.1}") }}%</span>
+            </div>
+        </div>
+        {% endfor %}
+        </div>
+    {% else %}
+        <div class="pm__empty">No market making opportunities detected</div>
+    {% endif %}
+    </div>
+
+    <!-- CROSS-PLATFORM -->
+    <div id="pm-crossplatform" class="arb-pane">
+    {% if !crossplatform.is_empty() %}
+        <div class="pm__cards">
+        {% for opp in crossplatform %}
+        <div class="pm-c pm-c--cp"
+             data-pm="crossplatform"
+             data-title="{{ opp.event_title }}"
+             data-poly-url="{{ opp.polymarket_url }}"
+             data-kalshi-url="{{ opp.kalshi_url }}"
+             data-poly-q="{{ opp.polymarket_question }}"
+             data-kalshi-ticker="{{ opp.kalshi_ticker }}"
+             data-poly-yes="{{ opp.polymarket_yes }}"
+             data-kalshi-yes="{{ opp.kalshi_yes }}"
+             data-spread="{{ opp.spread_pct }}"
+             data-buy="{{ opp.buy_platform }}"
+             data-sell="{{ opp.sell_platform }}"
+             data-vol="{{ opp.polymarket_volume }}">
+            <div class="pm-c__top">
+                <span class="pm-c__title">{{ opp.event_title }}</span>
+            </div>
+            <div class="pm-c__bar-track">
+                <div class="pm-c__bar pm-c__bar--cp" style="width:min({{ opp.spread_pct * 4.0 }}%,100%)"></div>
+            </div>
+            <div class="pm-c__bottom">
+                <div class="pm-c__chips">
+                    <span class="mono">PM ${{ opp.polymarket_yes|fmt("{:.3}") }}</span>
+                    <span class="mono">KS ${{ opp.kalshi_yes|fmt("{:.3}") }}</span>
+                    <span class="green">Buy {{ opp.buy_platform }}</span>
+                </div>
+                <span class="pm-c__pct">{{ opp.spread_pct|fmt("{:.1}") }}%</span>
+            </div>
+        </div>
+        {% endfor %}
+        </div>
+    {% else %}
+        <div class="pm__empty">No cross-platform arbitrage detected</div>
+    {% endif %}
+    </div>
+
+    <!-- NEWS ARB -->
+    <div id="pm-newsarb" class="arb-pane">
+    {% if !newsarb.is_empty() %}
+        <div class="pm__cards">
+        {% for opp in newsarb %}
+        <div class="pm-c pm-c--na {% if opp.price_change_pct > 15.0 %}pm-c--hot{% endif %}"
+             data-pm="newsarb"
+             data-title="{{ opp.question }}"
+             data-url="{{ opp.url }}"
+             data-event="{{ opp.event_title }}"
+             data-price="{{ opp.current_price }}"
+             data-change="{{ opp.price_change_pct }}"
+             data-dir="{{ opp.direction }}"
+             data-vol="{{ opp.volume_24h }}"
+             data-liq="{{ opp.liquidity }}">
+            <div class="pm-c__top">
+                <span class="pm-c__title">{{ opp.question }}</span>
+            </div>
+            <div class="pm-c__bar-track">
+                <div class="pm-c__bar pm-c__bar--na" style="width:min({{ opp.price_change_pct * 2.0 }}%,100%)"></div>
+            </div>
+            <div class="pm-c__bottom">
+                <div class="pm-c__chips">
+                    <span class="{% if opp.direction == "UP" %}green{% else %}red{% endif %}">{{ opp.direction }}</span>
+                    <span class="mono">${{ opp.current_price|fmt("{:.3}") }}</span>
+                    <span>Vol ${{ opp.volume_24h|fmt("{:.0}") }}</span>
+                </div>
+                <span class="pm-c__pct {% if opp.price_change_pct > 15.0 %}hot{% endif %}">{{ opp.price_change_pct|fmt("{:.1}") }}%</span>
+            </div>
+        </div>
+        {% endfor %}
+        </div>
+    {% else %}
+        <div class="pm__empty">No news arbitrage signals detected</div>
+    {% endif %}
+    </div>
+</div>
+
+<!-- Detail Overlay -->
+<div class="pm-detail" id="pmDetail">
+    <div class="pm-detail__backdrop"></div>
+    <div class="pm-detail__panel">
+        <div class="pm-detail__head">
+            <div>
+                <h3 class="pm-detail__title" id="pdTitle"></h3>
+                <div class="pm-detail__meta" id="pdMeta"></div>
+            </div>
+            <button class="pm-detail__close" id="pdClose">&times;</button>
+        </div>
+        <div class="pm-detail__content" id="pdContent"></div>
+    </div>
+</div>
+
+{% else %}
+<div class="pm__empty pm__empty--loading" hx-get="/polymarket/status" hx-trigger="every 3s" hx-swap="innerHTML" hx-target="closest .funding-data">
+    <div class="pm__empty-icon">&#9670;</div>
+    <p>Scanning Polymarket...</p>
+    <p class="pm__empty-sub">Data will appear shortly</p>
+</div>
+{% endif %}
+
+<script>if(typeof initPmTabs==='function')initPmTabs();</script>
