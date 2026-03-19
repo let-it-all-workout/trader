@@ -20,7 +20,7 @@ use axum::{
     http::{header, HeaderMap, StatusCode},
     response::{Html, IntoResponse, Response},
     routing::{get, post},
-    Router,
+    Json, Router,
 };
 use config::Config;
 use funding::{detect_arbs, ArbOpportunity, ExchangeFilter, FundingRate, StableArbOpportunity, EXCHANGES};
@@ -31,7 +31,7 @@ use polymarket::{
     CorrelationOpportunity, CrossPlatformOpportunity, EndgameOpportunity,
     MarketMakingOpportunity, NegRiskOpportunity, NewsArbOpportunity,
 };
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use std::collections::HashSet;
 use std::sync::Arc;
 use telegram::TelegramBot;
@@ -503,6 +503,38 @@ async fn polymarket_status(State(state): State<AppState>) -> impl IntoResponse {
     })
 }
 
+#[derive(Serialize)]
+struct HealthResponse {
+    ok: bool,
+    news_total: usize,
+    sources: SourceCountsJson,
+    news_updated: Option<String>,
+}
+
+#[derive(Serialize)]
+struct SourceCountsJson {
+    google: usize,
+    brave: usize,
+    twitter: usize,
+}
+
+async fn health(State(state): State<AppState>) -> impl IntoResponse {
+    let snapshot = state.nigeria_news.read().await.clone();
+    let sources = SourceCountsJson {
+        google: snapshot.source_counts.google,
+        brave: snapshot.source_counts.brave,
+        twitter: snapshot.source_counts.twitter_browser,
+    };
+    Json(HealthResponse {
+        ok: true,
+        news_total: snapshot.items.len(),
+        sources,
+        news_updated: snapshot
+            .updated_at
+            .map(|t| t.format("%Y-%m-%d %H:%M:%S UTC").to_string()),
+    })
+}
+
 async fn nigeria_news_status(State(state): State<AppState>) -> impl IntoResponse {
     let snapshot = state.nigeria_news.read().await.clone();
     let updated_label = match snapshot.updated_at {
@@ -602,13 +634,27 @@ fn spawn_news_updater(
     let refresh_secs = news_cfg.refresh_secs.max(60);
     tokio::spawn(async move {
         let client = reqwest::Client::builder()
-            .timeout(Duration::from_secs(20))
+            .timeout(Duration::from_secs(30))
+            .user_agent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36")
             .build()
             .unwrap_or_default();
 
         loop {
             match news::fetch_news_snapshot(&client, &news_cfg, 80).await {
                 Ok(snapshot) => {
+                    let n = snapshot.items.len();
+                    if n == 0 {
+                        tracing::warn!("news: fetch returned 0 items (sources: g{} b{} t{})",
+                            snapshot.source_counts.google,
+                            snapshot.source_counts.brave,
+                            snapshot.source_counts.twitter_browser);
+                    } else {
+                        tracing::info!("news: fetched {} items (g{} b{} t{})",
+                            n,
+                            snapshot.source_counts.google,
+                            snapshot.source_counts.brave,
+                            snapshot.source_counts.twitter_browser);
+                    }
                     *news_cache.write().await = snapshot.clone();
                     *intel_cache.write().await = intel::build_intel_snapshot(&snapshot);
                 }
@@ -634,19 +680,23 @@ fn spawn_news_updater(
 async fn main() {
     tracing_subscriber::fmt::init();
 
-    let mut config = Config::load(std::path::Path::new("polym.toml")).unwrap_or_else(|e| {
-        tracing::warn!("no polym.toml found ({e}), using defaults");
-        Config {
-            server: config::ServerConfig { port: 3000 },
-            telegram: config::TelegramConfig {
-                bot_token: String::new(),
-                channels: Default::default(),
-            },
-            agents: Default::default(),
-            news: Default::default(),
-            premium_feeds: Default::default(),
-        }
-    });
+    let config_paths = ["polym.toml", "./polym.toml", "/app/polym.toml"];
+    let mut config = config_paths
+        .iter()
+        .find_map(|p| Config::load(std::path::Path::new(p)).ok())
+        .unwrap_or_else(|| {
+            tracing::warn!("no polym.toml found in {:?}, using defaults", config_paths);
+            Config {
+                server: config::ServerConfig { port: 3000 },
+                telegram: config::TelegramConfig {
+                    bot_token: String::new(),
+                    channels: Default::default(),
+                },
+                agents: Default::default(),
+                news: Default::default(),
+                premium_feeds: Default::default(),
+            }
+        });
 
     // Railway/containers typically inject PORT at runtime.
     if let Ok(port_raw) = std::env::var("PORT") {
@@ -728,6 +778,7 @@ async fn main() {
     };
 
     let app = Router::new()
+        .route("/health", get(health))
         .route("/", get(index))
         .route("/dashboard", get(dashboard))
         .route("/agents/{id}/view", get(agent_view))
